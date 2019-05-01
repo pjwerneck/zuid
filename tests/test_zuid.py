@@ -1,10 +1,24 @@
 
+import mock
+
 from zuid import ZUID
 
-from freezegun import freeze_time
+
+@mock.patch('os.urandom')
+def test_generate_16_bytes_fixed_value(urandom_mock):
+    # test with a fixed value of 1 to guarantee endianness and
+    # justification is preserved between Python versions
+    urandom_mock.return_value = bytearray([1])
+
+    gen = ZUID(bytelength=16)
+
+    assert gen.length == 22
+
+    assert gen() == '0000000000000000000001'
 
 
 def test_generate_16_bytes_no_prefix():
+
     gen = ZUID(bytelength=16)
 
     assert gen.length == 22
@@ -33,23 +47,21 @@ def test_generate_16_bytes_timestamped():
     assert gen.length == 22
 
     # test if first bytes change with time
-    with freeze_time('2019-05-01 0:00:00.000001'):
+    with mock.patch('time.time') as mock_time:
+        mock_time.return_value = 1e-9
         ids = {gen() for x in range(1000)}
-
-        print(ids)
 
         assert len(ids) == 1000
         assert all(len(id_) == 22 for id_ in ids)
-        assert all(id_.startswith('1qzYhAtIv7A') for id_ in ids)
+        assert all(id_.startswith('00000000001') for id_ in ids)
 
-    with freeze_time('2019-05-01 0:00:00.000002'):
+    with mock.patch('time.time') as mock_time:
+        mock_time.return_value = 2e-9
         ids = {gen() for x in range(1000)}
-
-        print(ids)
 
         assert len(ids) == 1000
         assert all(len(id_) == 22 for id_ in ids)
-        assert all(id_.startswith('1qzYhAtIvJY') for id_ in ids)
+        assert all(id_.startswith('00000000002') for id_ in ids)
 
 
 def test_generate_16_bytes_timestamped_order():
@@ -60,3 +72,13 @@ def test_generate_16_bytes_timestamped_order():
     ids = [gen() for x in range(1000)]
 
     assert sorted(ids) == ids
+
+
+def test_generate_16_bytes_nontimestamped_order():
+    gen = ZUID(bytelength=16, timestamped=False)
+
+    assert gen.length == 22
+    # test if ids stay in order when sorted
+    ids = [gen() for x in range(1000)]
+
+    assert sorted(ids) != ids
