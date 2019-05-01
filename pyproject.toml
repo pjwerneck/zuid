@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "zuid"
+version = "0.1.0"
+description = ""
+authors = ["Pedro Werneck <pjwerneck@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+humanize = "^0.5.1"
+freezegun = "^0.3.11"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
