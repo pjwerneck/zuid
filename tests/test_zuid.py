@@ -4,22 +4,20 @@ import mock
 from zuid import ZUID
 
 
-@mock.patch('os.urandom')
-def test_generate_16_bytes_fixed_value(urandom_mock):
-    # test with a fixed value of 1 to guarantee endianness and
-    # justification is preserved between Python versions
-    urandom_mock.return_value = bytearray([1])
+@mock.patch('random.SystemRandom.choice')
+def test_generate_22_chars_fixed_value(choice_mock):
+    choice_mock.return_value = '0'
 
-    gen = ZUID(bytelength=16)
+    gen = ZUID(length=22)
 
     assert gen.length == 22
 
-    assert gen() == '0000000000000000000001'
+    assert gen() == '0' * 22
 
 
-def test_generate_16_bytes_no_prefix():
+def test_generate_22_chars_no_prefix():
 
-    gen = ZUID(bytelength=16)
+    gen = ZUID(length=22)
 
     assert gen.length == 22
 
@@ -29,8 +27,8 @@ def test_generate_16_bytes_no_prefix():
     assert all(len(id_) == 22 for id_ in ids)
 
 
-def test_generate_16_bytes_with_prefix():
-    gen = ZUID(bytelength=16, prefix='test_')
+def test_generate_22_chars_with_prefix():
+    gen = ZUID(length=22, prefix='test_')
 
     assert gen.length == 27
 
@@ -41,8 +39,8 @@ def test_generate_16_bytes_with_prefix():
     assert all(id_.startswith('test_') for id_ in ids)
 
 
-def test_generate_16_bytes_timestamped():
-    gen = ZUID(bytelength=16, timestamped=True)
+def test_generate_22_chars_timestamped():
+    gen = ZUID(length=22, timestamped=True)
 
     assert gen.length == 22
 
@@ -64,8 +62,8 @@ def test_generate_16_bytes_timestamped():
         assert all(id_.startswith('00000000002') for id_ in ids)
 
 
-def test_generate_16_bytes_timestamped_order():
-    gen = ZUID(bytelength=16, timestamped=True)
+def test_generate_22_chars_timestamped_order():
+    gen = ZUID(length=22, timestamped=True)
 
     assert gen.length == 22
     # test if ids stay in order when sorted
@@ -74,8 +72,8 @@ def test_generate_16_bytes_timestamped_order():
     assert sorted(ids) == ids
 
 
-def test_generate_16_bytes_nontimestamped_order():
-    gen = ZUID(bytelength=16, timestamped=False)
+def test_generate_22_chars_nontimestamped_order():
+    gen = ZUID(length=22, timestamped=False)
 
     assert gen.length == 22
     # test if ids stay in order when sorted

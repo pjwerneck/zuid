@@ -3,9 +3,12 @@ from zuid import ZUID
 import time
 
 
-gen = ZUID(prefix='lero_', bytelength=16, timestamped=True)
-print(gen.collision_probability())
+for b in range(10, 33):
+    gen = ZUID(prefix='lero_', bytelength=b, timestamped=True)
+    m, d = gen.collision_probability()
 
+
+gen = ZUID(prefix='lero_')
 while 1:
     v = gen()
 
