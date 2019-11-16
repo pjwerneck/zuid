@@ -1,5 +1,3 @@
-
-
 import binascii
 import math
 import os
@@ -20,7 +18,7 @@ class ZUID(object):
 
     """
 
-    def __init__(self, prefix='', length=22, timestamped=False, charset=CHARSET):
+    def __init__(self, prefix="", length=22, timestamped=False, charset=CHARSET):
         """Initializes the id factory
 
         :param prefix: the desired string prefix
@@ -57,11 +55,11 @@ class ZUID(object):
 
         """
 
-        timestamp = ''
+        timestamp = ""
         length = self.char_length
 
         if self.timestamped:
-            timestamp = self.charset_encode(int(time.time() * 1e9)).rjust(11, '0')
+            timestamp = self.charset_encode(int(time.time() * 1e9)).rjust(11, "0")
             length -= len(timestamp)
 
         id_ = self._random_chars(length)
@@ -70,7 +68,7 @@ class ZUID(object):
 
     def _random_chars(self, c):
         chars = [self._random.choice(self.charset) for _ in six.moves.range(c)]
-        return ''.join(chars)
+        return "".join(chars)
 
     def charset_encode(self, num):
         """Encodes the given number with the charset defined for this instance
@@ -82,7 +80,7 @@ class ZUID(object):
 
             chars.append(self.charset[r])
 
-        return ''.join(chars[::-1])
+        return "".join(chars[::-1])
 
     @property
     def bits(self):
@@ -96,6 +94,7 @@ class ZUID(object):
         """
 
         import humanize
+
         outputs = 2 ** (self.bytelength * 8)
 
         num = math.sqrt(2.0 * outputs * -math.log1p(-probability))
@@ -104,7 +103,9 @@ class ZUID(object):
 
         years = humanize.intword(num / (per_second * seconds_in_year))
 
-        message = ("If you generate {} ids per second, it would take {} years of work to "
-                   "have a {}% chance of at least one collision").format(per_second, years, probability * 100)
+        message = (
+            "If you generate {} ids per second, it would take {} years of work to "
+            "have a {}% chance of at least one collision"
+        ).format(per_second, years, probability * 100)
 
-        return message,
+        return (message,)
