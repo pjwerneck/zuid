@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zuid"
-version = "0.1.0"
+version = "0.1.1"
 description = "Random prefixed ids"
 authors = ["Pedro Werneck <pjwerneck@gmail.com>"]
 license = "MIT"
